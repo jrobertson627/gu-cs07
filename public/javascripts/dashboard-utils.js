@@ -1,4 +1,3 @@
-
 // TODO: fix this, it's not working for some reason
 // hides/shows cards based on what category (eg. housing, income) is selected 
 function filtercards(event, tabName) {
@@ -40,7 +39,7 @@ function renderDetailView(indicatorName) {
     // reset checkbox checks
     var checkboxes = document.getElementsByClassName("checkboxes");
     for (let i = 0; i < checkboxes.length; i++) {
-        var checkboxID = checkboxes[i].id.slice(0,2);
+        var checkboxID = checkboxes[i].id.slice(0, 2);
         if (checkboxID == "sp" || checkboxID == "wa") {
             checkboxes[i].checked = true;
         } else {
@@ -49,7 +48,7 @@ function renderDetailView(indicatorName) {
     }
 
     // TODO use the built in destroy() method for the chart instead of this 
-    var oldDetailedChartElement = document.getElementById('detailed-chart-canvas'); 
+    var oldDetailedChartElement = document.getElementById('detailed-chart-canvas');
     if (oldDetailedChartElement) {
         oldDetailedChartElement.remove()
     }
@@ -63,9 +62,9 @@ function renderDetailView(indicatorName) {
     // range slider
     var slider = document.getElementById('slider');
     if (window.rangeSlider) {
-        slider.noUiSlider.destroy()     // needed because cant update start range after created
+        slider.noUiSlider.destroy() // needed because cant update start range after created
     }
-    
+
     const range = getData(indicatorName, "years");
     let startRange = Number(range[0]);
     let endRange = Number(range[range.length - 1]);
@@ -79,14 +78,14 @@ function renderDetailView(indicatorName) {
         },
         margin: 1,
         tooltips: [
-            wNumb({decimals: 0}),
-            wNumb({decimals: 0})
+            wNumb({ decimals: 0 }),
+            wNumb({ decimals: 0 })
         ]
     });
 
 
     // set event listner for range slider
-    slider.noUiSlider.on('change', function (values) {
+    slider.noUiSlider.on('change', function(values) {
         console.log('range slider values:', values);
         let startIndex = range.indexOf(Math.trunc(values[0]));
         let endIndex = range.indexOf(Math.trunc(values[1]));
@@ -128,8 +127,7 @@ function toggleLocations(labelText, isChecked) {
             if (isChecked) {
                 console.log("adding data: " + labelText);
                 dataset.hidden = false;
-            }
-            else {
+            } else {
                 console.log("removing data: " + labelText);
                 dataset.hidden = true;
             }
@@ -140,7 +138,7 @@ function toggleLocations(labelText, isChecked) {
     slider.noUiSlider.reset();
 }
 
-window.onload = function () { 
+window.onload = function() {
     console.log("inside window.onload fuction!");
 
     // render each indicator chart
@@ -148,11 +146,11 @@ window.onload = function () {
     let lfprChart = new Chart("lfpr", getConfig("lfpr", false));
     let haiChart = new Chart("hai", getConfig("hai", false));
     let mhrvChart = new Chart("mhrv", getConfig("mhrv", false));
-    
+
     // adds event listeners to each card
     var cards = document.getElementsByClassName("card");
     for (var i = 0; i < cards.length; i++) {
-        cards[i].addEventListener("click", function () {
+        cards[i].addEventListener("click", function() {
             // render the detailed view
             let cardId = String(this.id);
             renderDetailView(cardId.slice(0, -5));
@@ -160,7 +158,7 @@ window.onload = function () {
             // display detailed view
             this.classList.toggle("active");
             var detailedView = document.getElementById("detailed-view-card")
-            //add content to detailed view here, identifuing what to put by card[i]
+                //add content to detailed view here, identifuing what to put by card[i]
             if (detailedView.style.maxHeight) {
                 detailedView.style.maxHeight = null;
             } else {
@@ -193,7 +191,7 @@ window.onload = function () {
     // add event listeners to checkboxes
     var checkboxes = document.getElementsByClassName("checkboxes");
     for (var i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].addEventListener("change", function () {
+        checkboxes[i].addEventListener("change", function() {
             var labelText = document.getElementById(this.id + "-label").textContent;
             if (this.checked) {
                 console.log("Checkbox is checked..");
@@ -205,6 +203,11 @@ window.onload = function () {
             }
         })
     }
+
+    $.get(`/v1/getManyLabor?county=${'Spokane'}&start_year=${2001}&end_year=${2022}`, function(data, error) {
+        console.log(JSON.stringify(data));
+        $("#code-camp").val(JSON.stringify(data))
+    });
 
 }
 
@@ -221,7 +224,8 @@ function getData(indicatorName, key) {
         },
         "hai": {
             "years": ["2017-Q2", "2017-Q3", "2017-Q4", "2018-Q1", "2018-Q2", "2018-Q3", "2018-Q4", "2019-Q1", "2019-Q2",
-                "2019-Q3", "2019-Q4", "2020-Q1", "2020-Q2", "2020-Q3", "2020-Q4", "2021-Q1", "2021-Q2"],
+                "2019-Q3", "2019-Q4", "2020-Q1", "2020-Q2", "2020-Q3", "2020-Q4", "2021-Q1", "2021-Q2"
+            ],
             "Spokane": [120, 119.2, 124.9, 119, 101.2, 100.3, 102.3, 107.8, 101, 107, 107.2, 109, 101, 104.3, 104.7, 100, 91],
             "Washington": [113, 105.2, 116.9, 105, 93.2, 94.3, 96.3, 98.8, 95, 97, 96.2, 99, 94, 94.3, 97.7, 93, 81],
             "Salt Lake City": [123, 115.2, 126.9, 115, 103.2, 104.3, 106.3, 108.8, 105, 107, 106.2, 109, 104, 104.3, 107.7, 103, 91],
@@ -229,23 +233,28 @@ function getData(indicatorName, key) {
         },
         "lfpr": {
             "years": [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010,
-                2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
+                2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020
+            ],
             "Spokane": [0.654940886, 0.638217302, 0.631321879, 0.637988787, 0.647612856,
                 0.650873484, 0.64505575, 0.651215869, 0.65634016, 0.648102291,
                 0.635798563, 0.613147897, 0.607221162, 0.593339734, 0.58155237,
-                0.582577853, 0.594528216, 0.59962342, 0.604294448, 0.618944993, 0.631327844],
+                0.582577853, 0.594528216, 0.59962342, 0.604294448, 0.618944993, 0.631327844
+            ],
             "Washington": [0.671989785, 0.657195957, 0.654734639, 0.654874995, 0.65880581, 0.661082,
                 0.658579957, 0.661803882, 0.666483053, 0.669471534, 0.670489496, 0.655017464,
                 0.650739986, 0.64225183, 0.638157731, 0.639128253, 0.643548353, 0.646432108,
-                0.648029965, 0.64707189, 0.644506668],
+                0.648029965, 0.64707189, 0.644506668
+            ],
             "Salt Lake City": [0.641989785, 0.667195957, 0.634734639, 0.653874995, 0.64880581, 0.651082,
                 0.658379957, 0.668803882, 0.662483053, 0.663471534, 0.680489496, 0.655017464,
                 0.630739986, 0.6455183, 0.666157731, 0.636128253, 0.66548353, 0.65432108,
-                0.643029965, 0.64307189, 0.65506668],
+                0.643029965, 0.64307189, 0.65506668
+            ],
             "Boise": [0.631989785, 0.65195957, 0.654734639, 0.654874995, 0.6680581, 0.661082,
                 0.653579957, 0.631803882, 0.676483053, 0.669471534, 0.66489496, 0.665017464,
                 0.63739986, 0.645225183, 0.635157731, 0.635128253, 0.6636548353, 0.666432108,
-                0.668029965, 0.66707189, 0.66506668]
+                0.668029965, 0.66707189, 0.66506668
+            ]
         },
         "mhi": {
             "years": [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019],
@@ -256,17 +265,25 @@ function getData(indicatorName, key) {
         },
         "mhrv": {
             "years": ["2018-Q1", "2018-Q2", "2018-Q3", "2018-Q4", "2019-Q1", "2019-Q2", "2019-Q3", "2019-Q4",
-                "2020-Q1", "2020-Q2", "2020-Q3", "2020-Q4", "2021-Q1", "2021-Q2"],
+                "2020-Q1", "2020-Q2", "2020-Q3", "2020-Q4", "2021-Q1", "2021-Q2"
+            ],
             "Spokane": [225100, 253200, 252800, 247400, 255600, 277400, 284200, 276900, 288100, 307100,
-                330200, 332900, 350900, 393700],
+                330200, 332900, 350900, 393700
+            ],
             "Washington": [360200, 373400, 368900, 356100, 374700, 410600, 400700, 396900, 415000, 433400,
-                452900, 460300, 491900, 570800],
+                452900, 460300, 491900, 570800
+            ],
             "Salt Lake City": [225100, 253200, 252800, 247400, 255600, 277400, 284200, 276900, 288100, 307100,
-                330200, 332900, 350900, 393700],
+                330200, 332900, 350900, 393700
+            ],
             "Boise": [360200, 373400, 368900, 356100, 374700, 410600, 400700, 396900, 415000, 433400,
-                452900, 460300, 491900, 570800],
+                452900, 460300, 491900, 570800
+            ],
         }
+
+
     }
+
 
     const data = tempdata[indicatorName][key];
     // console.log("getting data for " + indicatorName + "-" + key);
@@ -404,7 +421,7 @@ function getConfig(indicatorName, isDetailView) {
                             labelString: "Median Household Income (Dollars)"
                         },
                         ticks: {
-                            callback: function (value, index, values) {
+                            callback: function(value, index, values) {
                                 return '$' + value;
                             },
                             major: {
@@ -465,7 +482,7 @@ function getConfig(indicatorName, isDetailView) {
                             labelString: "Median Home Resale Value (Dollars)"
                         },
                         ticks: {
-                            callback: function (value, index, values) {
+                            callback: function(value, index, values) {
                                 return '$' + value;
                             }
                         }
