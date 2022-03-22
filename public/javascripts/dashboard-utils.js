@@ -208,7 +208,6 @@ window.onload = function() {
         console.log(JSON.stringify(data));
         $("#code-camp").val(JSON.stringify(data))
     });
-
 }
 
 // returns the temp data for each indicator
