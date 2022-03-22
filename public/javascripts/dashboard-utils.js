@@ -204,10 +204,25 @@ window.onload = function() {
         })
     }
 
-    $.get(`/v1/getManyLabor?county=${'Spokane'}&start_year=${2001}&end_year=${2022}`, function(data, error) {
+    var query = `?county=${'Spokane'}&start_year=${2001}&end_year=${2022}`
+
+    //   Option 1
+    $.get('/v1/getManyLabor/' + query, function(data, error) {
         console.log(JSON.stringify(data));
         $("#code-camp").val(JSON.stringify(data))
     });
+
+    //  Option 2 (preferred, also put inside async function and await results)
+    //  ex. 
+    //      async function getLabor() {...};
+    //      const res = await getLabor();
+    const res = fetch("/v1/getManyLabor/" + query, {
+            method: 'GET',
+            headers: {},
+            mode: "same-origin" //  IMPORTANT
+        })
+        .then(res => res.json())
+        .then(body => console.log(body));
 }
 
 // returns the temp data for each indicator
